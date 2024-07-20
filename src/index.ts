@@ -1,7 +1,10 @@
-import { Elysia } from "elysia";
+import { Elysia, error, InternalServerError, NotFoundError } from "elysia";
 import { userController } from "./controllers/userController";
+import { ErrorHandler } from "./utils/errorHandler";
+import { HttpError, httpError } from "./common/errorCode";
 
 const APP_PORT = process.env.APP_PORT || 3000;
+
 
 const app = new Elysia()
   .get("/", ({ set }) => {
@@ -12,6 +15,8 @@ const app = new Elysia()
       data: null,
     };
   })
+  .use(httpError())
+  .onError(ErrorHandler)
   .group("/users", (route) => route.use(userController))
   .listen(APP_PORT);
 console.log(
