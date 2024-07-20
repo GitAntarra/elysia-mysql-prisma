@@ -1,7 +1,19 @@
 import { Elysia } from "elysia";
+import { userController } from "./controllers/userController";
 
-const app = new Elysia().get("/", () => "Hello Elysia").listen(3000);
+const APP_PORT = process.env.APP_PORT || 3000;
 
+const app = new Elysia()
+  .get("/", ({ set }) => {
+    set.status = 200;
+    return {
+      err: false,
+      msg: "hello, welcom antarra learn",
+      data: null,
+    };
+  })
+  .group("/users", (route) => route.use(userController))
+  .listen(APP_PORT);
 console.log(
-  `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`
+  `🦊 Application running at ${app.server?.hostname}:${app.server?.port}`
 );
