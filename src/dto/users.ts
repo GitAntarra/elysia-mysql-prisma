@@ -20,3 +20,12 @@ export const CreateUserDto = t.Object({
 });
 
 export type CreateUserStatic = Static<typeof CreateUserDto>;
+
+export const UpdateUserDto = t.Object({
+  username: t.String(),
+  email: t.String(),
+  name: t.String(),
+  role: t.Enum(Role),
+});
+
+export type UpdateUserStatic = Static<typeof UpdateUserDto>;

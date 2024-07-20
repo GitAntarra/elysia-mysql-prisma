@@ -1,6 +1,6 @@
 import Elysia, { t } from "elysia";
 import { UserServices } from "../services/userService";
-import { CreateUserDto } from "../dto/users";
+import { CreateUserDto, UpdateUserDto } from "../dto/users";
 
 const userService = new UserServices();
 
@@ -31,7 +31,7 @@ export const userController = new Elysia()
   .get(
     "/:username",
     async ({ params, set }) => {
-      const result = await userService.showUserByUsername(params.username)
+      const result = await userService.showUserByUsername(params.username);
       set.status = 200;
       return {
         err: false,
@@ -41,14 +41,32 @@ export const userController = new Elysia()
     },
     { params: t.Object({ username: t.String() }) }
   )
-  .put("/:username", async ({ set }) => {
-    set.status = 201;
-    return {
-      err: false,
-      msg: "ini update user",
-      data: null,
-    };
-  })
+  .put(
+    "/:username",
+    async ({ params, body, set }) => {
+      const result = await userService.updateUser(params.username, body)
+      set.status = 201;
+      return {
+        err: false,
+        msg: "Update User Berhasil",
+        data: result,
+      };
+    },
+    { params: t.Object({ username: t.String() }), body: UpdateUserDto }
+  )
+  .put(
+    "/:username/password",
+    async ({ params, body, set }) => {
+      const result = await userService.updateUserPassword(params.username, body.oldpassword, body.password)
+      set.status = 201;
+      return {
+        err: false,
+        msg: "Update Password Berhasil",
+        data: result,
+      };
+    },
+    { params: t.Object({ username: t.String() }), body: t.Object({ oldpassword: t.String(), password: t.String()}) }
+  )
   .delete("/:username", async ({ set }) => {
     set.status = 201;
     return {
