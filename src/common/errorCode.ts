@@ -9,6 +9,10 @@ export class HttpError extends Error {
     super(message);
   }
 
+  public static SuccesResponse(message?: string, errorData?: any) {
+    return new HttpError(message || "Bad Request", 400, errorData);
+  }
+
   public static BadRequest(message?: string, errorData?: any) {
     return new HttpError(message || "Bad Request", 400, errorData);
   }
@@ -99,10 +103,10 @@ export const httpError = (
           return error.message;
         }
         return {
-          error: true,
-          code: error.statusCode,
-          message: error.message,
+          err: true,
+          // code: error.statusCode,
+          msg: error.message,
           data: error.errorData,
         };
       }
-    });
+    })
