@@ -67,11 +67,12 @@ export const userController = new Elysia()
     },
     { params: t.Object({ username: t.String() }), body: t.Object({ oldpassword: t.String(), password: t.String()}) }
   )
-  .delete("/:username", async ({ set }) => {
+  .delete("/:username", async ({ params, set }) => {
+    const result = await userService.deleteUser(params.username)
     set.status = 201;
     return {
       err: false,
-      msg: "ini hapus user",
-      data: null,
+      msg: "User berhasil dihapus",
+      data: result,
     };
-  });
+  }, {params: t.Object({ username: t.String() })});

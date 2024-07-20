@@ -123,4 +123,15 @@ export class UserServices {
       throw new Error(typeof err === 'object' ? JSON.stringify(err) : 'error');
     }
   }
+
+  async deleteUser(username: string):Promise<any>{
+    const userDelete = await db.users.delete({where:{
+      username
+    }})
+    if(!userDelete){
+      throw new Error('usernot found')
+    }
+
+    return userDelete
+  }
 }
