@@ -3,16 +3,12 @@ import Elysia, { t } from "elysia";
 import { AuthService } from "../services/authService";
 import { CredentialDto } from "../dto/auth";
 import { SuccessResponse } from "../utils/successResponse";
+import { jwtConfig } from "../config/jwt";
 
 const authService = new AuthService();
 
 export const AuthController = new Elysia()
-    .use(jwt({
-        name: 'jwt',
-        schema: t.Object({username: t.String()}),
-        secret: process.env.JWT_SECRET!,
-        exp: process.env.JWT_EXPIRED!
-    }))
+    .use(jwtConfig)
     .post("/signin", async ({body, jwt, set})=>{
         const result = await authService.SignIn(body)
 

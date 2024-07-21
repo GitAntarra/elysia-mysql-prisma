@@ -18,7 +18,7 @@ const app = new Elysia()
   .use(httpError())
   .onAfterHandle(handleSuccessResponse)
   .group("/users", (route) => route.use(userController))
-  .group("/auth", (route)=> route.use(AuthController))
+  .group("/auth", (route) => route.use(AuthController))
   .listen(APP_PORT);
 console.log(
   `🦊 Application running at ${app.server?.hostname}:${app.server?.port}`

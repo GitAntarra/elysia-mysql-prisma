@@ -3,10 +3,12 @@ import { UserServices } from "../services/userService";
 import { CreateUserDto, UpdateUserDto, User } from "../dto/users";
 import { SuccessResponse } from "../utils/successResponse";
 import { paginateData } from "../utils/paginate";
+import { IsAuthenticated } from "../middlewares/isAuthenticated";
 
 const userService = new UserServices();
 
 export const userController = new Elysia()
+  .use(IsAuthenticated)
   .post(
     "",
     async ({ body, set }): Promise<SuccessResponse<User>> => {
@@ -18,11 +20,22 @@ export const userController = new Elysia()
     },
     { body: CreateUserDto }
   )
-  .get("", async ({ query, set }): Promise<SuccessResponse<{list: User[], meta: any}>> => {
-    const result = await userService.showAllUser(query);
-    set.status = 200;
-    return new SuccessResponse("Menampilkan semua Penguna", result);
-  },{query: paginateData})
+  .get(
+    "",
+    async ({
+      query,
+      set,
+      isLogin
+    }): Promise<SuccessResponse<{ list: User[]; meta: any }>> => {
+      const result = await userService.showAllUser(query);
+
+      console.log(isLogin);
+      
+      set.status = 200;
+      return new SuccessResponse("Menampilkan semua Penguna", result);
+    },
+    { query: paginateData }
+  )
   .get(
     "/:username",
     async ({ params, set }): Promise<SuccessResponse<User>> => {
