@@ -2,6 +2,7 @@ import Elysia, { t } from "elysia";
 import { UserServices } from "../services/userService";
 import { CreateUserDto, UpdateUserDto, User } from "../dto/users";
 import { SuccessResponse } from "../utils/successResponse";
+import { paginateData } from "../utils/paginate";
 
 const userService = new UserServices();
 
@@ -17,11 +18,11 @@ export const userController = new Elysia()
     },
     { body: CreateUserDto }
   )
-  .get("", async ({ set }): Promise<SuccessResponse<User[]>> => {
-    const result = await userService.showAllUser();
+  .get("", async ({ query, set }): Promise<SuccessResponse<{list: User[], meta: any}>> => {
+    const result = await userService.showAllUser(query);
     set.status = 200;
     return new SuccessResponse("Menampilkan semua Penguna", result);
-  })
+  },{query: paginateData})
   .get(
     "/:username",
     async ({ params, set }): Promise<SuccessResponse<User>> => {

@@ -4,6 +4,7 @@ import { CreateUserStatic, UpdateUserStatic, User } from "../dto/users";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { NotFoundError } from "elysia";
 import { HttpError } from "../common/errorCode";
+import { MetaData, pagiMeta, paginate, paginateDataStatic } from "../utils/paginate";
 
 export class UserServices {
   async createUser(data: CreateUserStatic): Promise<User> {
@@ -33,8 +34,14 @@ export class UserServices {
     }
   }
 
-  async showAllUser(): Promise<User[]> {
+  async showAllUser(query: paginateDataStatic): Promise<{list: User[], meta: any}> {
+    const { page, take, skip, order } = paginate(query)
     const users = await db.users.findMany({
+      skip,
+      take: take,
+      orderBy: {
+        updatedAt: order,
+      },
       select: {
         username: true,
         email: true,
@@ -44,8 +51,9 @@ export class UserServices {
         updatedAt: true,
       },
     });
-
-    return users;
+    const totalPosts = await db.users.count();
+    
+    return { list: users, meta: pagiMeta({ page, take, totalPosts }) };
   }
 
   async showUserByUsername(username: string): Promise<User> {
